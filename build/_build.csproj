@@ -11,7 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="2.5.0" />
     <PackageReference Include="Nuke.Common" Version="6.2.1" />
+    <PackageDownload Include="Codecov.Tool" Version="[1.13.0]" />
     <PackageDownload Include="GitVersion.Tool" Version="[5.10.3]" />
   </ItemGroup>
 

@@ -4,6 +4,8 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tools.Codecov;
+using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.Octopus;
@@ -16,7 +18,7 @@ namespace Build;
     "ci",
     GitHubActionsImage.UbuntuLatest,
     On = new[] { GitHubActionsTrigger.Push },
-    ImportSecrets = new[] { "NugetServerKey" },
+    ImportSecrets = new[] { "NugetServerKey", "CodecovKey" },
     FetchDepth = 0
 )]
 class Build : NukeBuild
@@ -30,6 +32,10 @@ class Build : NukeBuild
     [Secret]
     private readonly string _nugetServerKey;
 
+    [Parameter("CodeCov Key")]
+    [Secret]
+    private readonly string _codecovKey;
+
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     private readonly Configuration _configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
@@ -40,6 +46,7 @@ class Build : NukeBuild
     readonly GitVersion _gitVersion;
 
     private AbsolutePath _nugetsDirectory => RootDirectory / "artifacts";
+    private AbsolutePath _testsDirectory => _nugetsDirectory / "tests";
     private readonly string[] _projectsToCreateNugetsFrom =
     {
         "GrpcInit.Console"
@@ -60,11 +67,28 @@ class Build : NukeBuild
         {
             foreach (var unitTestProject in _solution.AllProjects.Where(p => p.Name.EndsWith(".Tests", true, CultureInfo.InvariantCulture)))
             {
-                DotNetTest(
+                var results = DotNetTest(
                     s => s
                         .SetNoBuild(true)
+                        .SetDataCollector("XPlat Code Coverage")
+                        .EnableCollectCoverage()
+                        .SetResultsDirectory(_testsDirectory)
                         .SetConfiguration(_configuration)
                         .SetProjectFile(unitTestProject));
+            }
+        });
+
+    Target UploadCoverage => _ => _
+        .Executes(() =>
+        {
+            foreach (var file in _testsDirectory.GlobFiles("**/*"))
+            {
+                CodecovTasks.Codecov(
+                    s => s
+                        .SetFramework("net5.0")
+                        .SetFiles(file)
+                        .SetToken(_codecovKey)
+                );
             }
         });
 
@@ -106,6 +130,7 @@ class Build : NukeBuild
 
     Target PushNugets => _ => _
         .DependsOn(CreateNugets)
+        .Triggers(UploadCoverage)
         .Executes(() =>
         {
             foreach (var packagePath in _nugetsDirectory.GlobFiles("*.nupkg"))
