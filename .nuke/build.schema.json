@@ -8,7 +8,8 @@
       "properties": {
         "_codecovKey": {
           "type": "string",
-          "description": "CodeCov Key"
+          "description": "CodeCov Key",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
         "_configuration": {
           "type": "string",
@@ -94,7 +95,8 @@
               "CreateNugets",
               "PushNugets",
               "Restore",
-              "Test"
+              "Test",
+              "UploadCoverage"
             ]
           }
         },
@@ -109,7 +111,8 @@
               "CreateNugets",
               "PushNugets",
               "Restore",
-              "Test"
+              "Test",
+              "UploadCoverage"
             ]
           }
         },

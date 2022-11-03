@@ -14,13 +14,14 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace Build;
 
-[GitHubActions(
-    "ci",
-    GitHubActionsImage.UbuntuLatest,
-    On = new[] { GitHubActionsTrigger.Push },
-    ImportSecrets = new[] { "NugetServerKey", "CodecovKey" },
-    FetchDepth = 0
-)]
+// TODO: Figure out how to add extra frameworks
+// [GitHubActions(
+//     "ci",
+//     GitHubActionsImage.UbuntuLatest,
+//     On = new[] { GitHubActionsTrigger.Push },
+//     ImportSecrets = new[] { "NugetServerKey", "CodecovKey" },
+//     FetchDepth = 0
+// )]
 class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.PushNugets);
