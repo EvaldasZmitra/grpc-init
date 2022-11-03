@@ -21,7 +21,7 @@ namespace Build;
 )]
 class Build : NukeBuild
 {
-    public static int Main() => Execute<Build>(x => x.BuildSolution);
+    public static int Main() => Execute<Build>(x => x.PushNugets);
 
     [Parameter("Nuget Server URL to push nuget to.")]
     private readonly string _nugetServerUrl;
@@ -70,7 +70,6 @@ class Build : NukeBuild
 
     Target BuildSolution => _ => _
         .DependsOn(Restore)
-        .Triggers(CreateNugets)
         .Executes(() =>
         {
             DotNetBuild(x => x
@@ -83,7 +82,6 @@ class Build : NukeBuild
         .DependsOn(BuildSolution)
         .DependsOn(Clean)
         .DependsOn(Test)
-        .Triggers(PushNugets)
         .Executes(() =>
         {
             foreach (var projectName in _projectsToCreateNugetsFrom)
