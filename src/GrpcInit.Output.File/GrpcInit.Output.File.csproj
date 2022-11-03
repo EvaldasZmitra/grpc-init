@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\GrpcInit.Output.Abstractions\GrpcInit.Output.Abstractions.csproj" />
+    <ProjectReference Include="..\GrpcInit.Domain\GrpcInit.Domain.csproj" />
+  </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

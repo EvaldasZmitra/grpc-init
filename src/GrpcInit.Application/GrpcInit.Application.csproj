@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>GrpcInit.Application</RootNamespace>
+    <AssemblyName>GrpcInit.Application</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GrpcInit.Adapter.Abstractions\GrpcInit.Adapter.Abstractions.csproj" />
+    <ProjectReference Include="..\GrpcInit.Domain\GrpcInit.Domain.csproj" />
+    <ProjectReference Include="..\GrpcInit.Output.Abstractions\GrpcInit.Output.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

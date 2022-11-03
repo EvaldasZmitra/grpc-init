@@ -1,0 +1,5 @@
+{
+  "$schema": "./build.schema.json",
+  "_solution": "GrpcInit.sln",
+  "_nugetServerUrl": "https://api.nuget.org/v3/index.json"
+}

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>GrpcInit.Adapter.AspNetCore</RootNamespace>
+    <AssemblyName>GrpcInit.Adapter.AspNetCore</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.21.8" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.49.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GrpcInit.Adapter.Abstractions\GrpcInit.Adapter.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
