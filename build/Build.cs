@@ -87,10 +87,10 @@ class Build : NukeBuild
             foreach (var projectName in _projectsToCreateNugetsFrom)
             {
                 var pathToProject = $"src/{projectName}/{projectName}.csproj";
-
                 DotNetPack(
                     s => s
-                        .SetTitle("Proto Downloader")
+                        .SetTitle("Grpc Init")
+                        .AddAuthors("Evaldas Zmitra")
                         .SetDescription("Dotnet tool that gets nuget files via reflection endpoint.")
                         .SetRepositoryUrl("https://github.com/EvaldasZmitra/grpc-init")
                         .SetPackageId("grpc-init")
