@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
-            5.0.x
+            5.0
             6.0.x
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v2
