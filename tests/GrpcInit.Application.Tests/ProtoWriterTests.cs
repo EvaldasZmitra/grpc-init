@@ -18,7 +18,7 @@ public class ProtoWriterTests
     [AutoData]
     public async Task Should(ProtoFileTokens tokens)
     {
-        var exptected = "Line1\n\n\nLine2\n\n\n";
+        var exptected = "Line1\nLine2";
         var writer1 = new Mock<IWriter>();
         var writer2 = new Mock<IWriter>();
         writer1.Setup(x => x.Write(tokens)).Returns(new[] { "Line1" });

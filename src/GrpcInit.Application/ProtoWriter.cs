@@ -16,9 +16,9 @@ public sealed class ProtoWriter : IProtoWriter
     {
         var codeChunks = await Task.WhenAll(
             _pipeline.Select(
-                async (writer) => await Task.Run(() => writer.Write(tokens).Append("\n"))
+                async (writer) => await Task.Run(() => writer.Write(tokens))
             )
         );
-        return string.Join("\n", codeChunks.SelectMany(x => x)) + "\n";
+        return string.Join("\n", codeChunks.SelectMany(x => x));
     }
 }

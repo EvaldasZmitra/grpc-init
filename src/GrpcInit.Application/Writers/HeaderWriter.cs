@@ -7,6 +7,6 @@ public sealed class HeaderWriter : IWriter
 {
     public IEnumerable<string> Write(ProtoFileTokens proto) => new List<string>
         {
-            $"syntax = \"{proto.Syntax}\";"
+            $"syntax = \"{proto.Syntax}\";\n"
         };
 }

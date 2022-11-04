@@ -43,7 +43,7 @@ public class HeaderWriterTests
                     Array.Empty<ProtoServiceToken>()
                 ),
                 new [] {
-                    "syntax = \"proto3\";"
+                    "syntax = \"proto3\";\n"
                 }
             },
             new object[] {
@@ -56,7 +56,7 @@ public class HeaderWriterTests
                     Array.Empty<ProtoServiceToken>()
                 ),
                 new [] {
-                    "syntax = \"proto2\";"
+                    "syntax = \"proto2\";\n"
                 }
             }
         };
