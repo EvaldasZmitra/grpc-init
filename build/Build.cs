@@ -86,7 +86,7 @@ class Build : NukeBuild
             {
                 CodecovTasks.Codecov(
                     s => s
-                        .SetFramework("netcoreapp3.1")
+                        .SetFramework("net5.0")
                         .SetFiles(file)
                         .SetToken(_codecovKey)
                 );
