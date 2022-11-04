@@ -34,9 +34,9 @@ public sealed class InitCommand : ICommand
                     {
                         new HeaderWriter(),
                         new ImportWriter(),
-                        new ServiceWriter(),
-                        new MessageWriter(),
-                        new EnumWriter()
+                        new ServiceWriter(new ElementWriter()),
+                        new MessageWriter(new ElementWriter()),
+                        new EnumWriter(new ElementWriter())
                     }
                 )
             )

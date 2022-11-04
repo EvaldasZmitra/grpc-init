@@ -1,10 +1,10 @@
-using FluentAssertions;
 using GrpcInit.Application.Writers;
 using GrpcInit.Application.Writers.Abstractions;
 using GrpcInit.Domain;
 using GrpcInit.Domain.Enum;
 using GrpcInit.Domain.Message;
 using GrpcInit.Domain.Service;
+using Moq;
 using Xunit;
 
 namespace GrpcInit.Application.Tests.Writers;
@@ -12,22 +12,24 @@ namespace GrpcInit.Application.Tests.Writers;
 public class MessageWriterTests
 {
     private readonly IWriter _writer;
+    private readonly Mock<IElementWriter> _elementWriter = new();
 
-    public MessageWriterTests() => _writer = new MessageWriter();
+    public MessageWriterTests() => _writer = new MessageWriter(_elementWriter.Object);
 
     [Theory]
     [MemberData(nameof(WritesCorrectOutputData))]
     public void WritesCorrectOutput(
         ProtoFileTokens tokens,
-        IEnumerable<string> expected
+        string expectedName,
+        IEnumerable<string> expectedContent
     )
     {
         var lines = _writer.Write(tokens);
 
-        lines.Should().BeEquivalentTo(
-            expected,
-            options => options.WithStrictOrdering()
-        );
+        _elementWriter.Verify(x => x.WriteBlock(
+            expectedName,
+            expectedContent
+        ));
     }
 
     public static IEnumerable<object[]> WritesCorrectOutputData =>
@@ -49,11 +51,9 @@ public class MessageWriterTests
                     },
                     Array.Empty<ProtoServiceToken>()
                 ),
+                "message MyMessage",
                 new [] {
-                    "message MyMessage {",
-                    "\tLabel Type Name = 1;",
-                    "}",
-                    ""
+                    "Label Type Name = 1;"
                 }
             }
         };
