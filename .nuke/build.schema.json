@@ -94,7 +94,6 @@
               "Clean",
               "CreateNugets",
               "PushNugets",
-              "Restore",
               "Test",
               "UploadCoverage"
             ]
@@ -110,7 +109,6 @@
               "Clean",
               "CreateNugets",
               "PushNugets",
-              "Restore",
               "Test",
               "UploadCoverage"
             ]
