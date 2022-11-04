@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
+using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.Codecov;
@@ -14,17 +15,16 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace Build;
 
-// TODO: Figure out how to add extra frameworks
-// [GitHubActions(
-//     "ci",
-//     GitHubActionsImage.UbuntuLatest,
-//     On = new[] { GitHubActionsTrigger.Push },
-//     ImportSecrets = new[] { "NugetServerKey", "CodecovKey" },
-//     FetchDepth = 0
-// )]
+[GitHubActions(
+    "ci",
+    GitHubActionsImage.UbuntuLatest,
+    On = new[] { GitHubActionsTrigger.Push },
+    ImportSecrets = new[] { "NugetServerKey", "CodecovKey" },
+    FetchDepth = 0
+)]
 class Build : NukeBuild
 {
-    public static int Main() => Execute<Build>(x => x.PushNugets);
+    public static int Main() => Execute<Build>(x => x.BuildSolution);
 
     [Parameter("Nuget Server URL to push nuget to.")]
     private readonly string _nugetServerUrl;
@@ -46,6 +46,9 @@ class Build : NukeBuild
     [GitVersion]
     readonly GitVersion _gitVersion;
 
+    [GitRepository]
+    readonly GitRepository _gitRepository;
+
     private AbsolutePath _nugetsDirectory => RootDirectory / "artifacts";
     private AbsolutePath _testsDirectory => _nugetsDirectory / "tests";
     private readonly string[] _projectsToCreateNugetsFrom =
@@ -54,16 +57,11 @@ class Build : NukeBuild
     };
 
     Target Clean => _ => _
-        .Before(Restore)
-        .Executes(() =>
-        {
-        });
-
-    Target Restore => _ => _
         .Executes(() => EnsureCleanDirectory(_nugetsDirectory));
 
     Target Test => _ => _
         .DependsOn(BuildSolution)
+        .Triggers(CreateNugets)
         .Executes(() =>
         {
             foreach (var unitTestProject in _solution.AllProjects.Where(p => p.Name.EndsWith(".Tests", true, CultureInfo.InvariantCulture)))
@@ -80,6 +78,7 @@ class Build : NukeBuild
         });
 
     Target UploadCoverage => _ => _
+        .OnlyWhenStatic(() => !IsLocalBuild)
         .Executes(() =>
         {
             foreach (var file in _testsDirectory.GlobFiles("**/*"))
@@ -94,7 +93,8 @@ class Build : NukeBuild
         });
 
     Target BuildSolution => _ => _
-        .DependsOn(Restore)
+        .DependsOn(Clean)
+        .Triggers(Test)
         .Executes(() =>
         {
             DotNetBuild(x => x
@@ -104,7 +104,8 @@ class Build : NukeBuild
         });
 
     Target CreateNugets => _ => _
-        .DependsOn(BuildSolution)
+        .Triggers(PushNugets)
+        .OnlyWhenStatic(() => !IsLocalBuild && _gitRepository.IsOnMainOrMasterBranch())
         .DependsOn(Clean)
         .DependsOn(Test)
         .Executes(() =>
@@ -130,7 +131,7 @@ class Build : NukeBuild
         });
 
     Target PushNugets => _ => _
-        .DependsOn(CreateNugets)
+        .OnlyWhenStatic(() => !IsLocalBuild && _gitRepository.IsOnMainOrMasterBranch())
         .Triggers(UploadCoverage)
         .Executes(() =>
         {
